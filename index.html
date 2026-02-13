@@ -56,17 +56,6 @@
         z-index: 2;
     }
 
-    .music-btn {
-        margin-top: 20px;
-        padding: 10px 20px;
-        font-size: 18px;
-        border: none;
-        border-radius: 10px;
-        cursor: pointer;
-        position: relative;
-        z-index: 2;
-    }
-
     .heart {
         position: fixed;
         top: -10px;
@@ -113,8 +102,6 @@
 
 <h1>Beni Seviyor Musun? 💖</h1>
 
-<button class="music-btn" onclick="playMusic()">🎵 Müziği Başlat</button>
-
 <button id="yes" class="btn">Evet 😍</button>
 <button id="no" class="btn">Hayır 🙄</button>
 
@@ -122,6 +109,7 @@
 
 <script>
     const noBtn = document.getElementById("no");
+    const iframe = document.getElementById("bgMusic");
 
     // Hayır kaçıyor
     noBtn.addEventListener("mouseover", function() {
@@ -130,6 +118,14 @@
         noBtn.style.left = x + "px";
         noBtn.style.top = y + "px";
     });
+
+    // İlk dokunuşta müzik başlat
+    document.addEventListener("click", function() {
+        iframe.contentWindow.postMessage(
+            '{"event":"command","func":"playVideo","args":""}',
+            '*'
+        );
+    }, { once: true });
 
     // Kalp oluşturma
     function createHeart() {
@@ -155,16 +151,8 @@
             setTimeout(createHeart, i * 80);
         }
     });
-
-    // Müziği başlat
-    function playMusic() {
-        const iframe = document.getElementById("bgMusic");
-        iframe.contentWindow.postMessage(
-            '{"event":"command","func":"playVideo","args":""}',
-            '*'
-        );
-    }
 </script>
 
 </body>
 </html>
+
