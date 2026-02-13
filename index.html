@@ -50,9 +50,20 @@
         position: absolute;
         width: 100%;
         bottom: 80px;
-        font-size: 32px;
+        font-size: 28px;
         color: white;
         font-weight: bold;
+        z-index: 2;
+    }
+
+    .music-btn {
+        margin-top: 20px;
+        padding: 10px 20px;
+        font-size: 18px;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+        position: relative;
         z-index: 2;
     }
 
@@ -93,13 +104,16 @@
 
 <div class="video-background">
     <iframe 
-        src="https://www.youtube.com/embed/GxldQ9eX2wo?autoplay=1&loop=1&playlist=GxldQ9eX2wo&controls=0&modestbranding=1"
+        id="bgMusic"
+        src="https://www.youtube.com/embed/GxldQ9eX2wo?enablejsapi=1&loop=1&playlist=GxldQ9eX2wo"
         frameborder="0"
         allow="autoplay">
     </iframe>
 </div>
 
 <h1>Beni Seviyor Musun? 💖</h1>
+
+<button class="music-btn" onclick="playMusic()">🎵 Müziği Başlat</button>
 
 <button id="yes" class="btn">Evet 😍</button>
 <button id="no" class="btn">Hayır 🙄</button>
@@ -117,6 +131,7 @@
         noBtn.style.top = y + "px";
     });
 
+    // Kalp oluşturma
     function createHeart() {
         const heart = document.createElement("div");
         heart.classList.add("heart");
@@ -131,6 +146,7 @@
         }, 5000);
     }
 
+    // Evet'e basınca
     document.getElementById("yes").addEventListener("click", function() {
         document.getElementById("message").innerHTML =
         "Ben de seni çok seviyorum. Sevgililer günümüz kutlu olsun. ❤️🥰";
@@ -139,6 +155,15 @@
             setTimeout(createHeart, i * 80);
         }
     });
+
+    // Müziği başlat
+    function playMusic() {
+        const iframe = document.getElementById("bgMusic");
+        iframe.contentWindow.postMessage(
+            '{"event":"command","func":"playVideo","args":""}',
+            '*'
+        );
+    }
 </script>
 
 </body>
