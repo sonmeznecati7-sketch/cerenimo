@@ -5,180 +5,165 @@
 <title>Beni Seviyor Musun?</title>
 
 <style>
-    body {
-        background: linear-gradient(135deg, #ff758c, #ff7eb3);
-        font-family: Arial, sans-serif;
-        text-align: center;
-        margin: 0;
-        overflow: hidden;
-    }
+  body{
+    background: linear-gradient(135deg,#ff758c,#ff7eb3);
+    font-family: Arial, sans-serif;
+    text-align:center;
+    margin:0;
+    overflow:hidden;
+  }
 
-    h1 {
-        color: white;
-        margin-top: 100px;
-        font-size: 40px;
-        position: relative;
-        z-index: 2;
-    }
+  /* UI katmanı: titreşimi buna vereceğiz */
+  #ui{
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    z-index: 2;
+  }
 
-    .btn {
-        padding: 15px 30px;
-        font-size: 20px;
-        border: none;
-        border-radius: 15px;
-        cursor: pointer;
-        position: absolute;
-        transition: 0.2s;
-        z-index: 2;
-    }
+  h1{
+    color:#fff;
+    margin-top:100px;
+    font-size:40px;
+    position:relative;
+  }
 
-    #yes {
-        background-color: #4CAF50;
-        color: white;
-        left: 45%;
-        top: 50%;
-    }
+  .btn{
+    padding:15px 30px;
+    font-size:20px;
+    border:none;
+    border-radius:15px;
+    cursor:pointer;
+    position:absolute;
+    transition:0.2s;
+  }
 
-    #no {
-        background-color: #f44336;
-        color: white;
-        left: 60%;
-        top: 50%;
-    }
+  #yes{ background:#4CAF50; color:#fff; left:45%; top:50%; }
+  #no{  background:#f44336; color:#fff; left:60%; top:50%; }
 
-    #message {
-        position: absolute;
-        width: 100%;
-        bottom: 80px;
-        font-size: 28px;
-        color: white;
-        font-weight: bold;
-        z-index: 2;
-    }
+  #message{
+    position:absolute;
+    width:100%;
+    bottom:80px;
+    font-size:28px;
+    color:#fff;
+    font-weight:bold;
+  }
 
-    .heart {
-        position: fixed;
-        top: -10px;
-        animation: fall linear forwards;
-        z-index: 1;
-    }
+  .heart{
+    position:fixed;
+    top:-10px;
+    animation: fall linear forwards;
+    z-index: 1;
+    pointer-events:none;
+  }
+  @keyframes fall{
+    to{ transform: translateY(100vh); opacity:0; }
+  }
 
-    @keyframes fall {
-        to {
-            transform: translateY(100vh);
-            opacity: 0;
-        }
-    }
+  /* Daha belirgin titreşim */
+  .shake{
+    animation: shake 0.55s cubic-bezier(.36,.07,.19,.97) both;
+  }
+  @keyframes shake{
+    0%   { transform: translate3d(0,0,0) rotate(0deg); }
+    10%  { transform: translate3d(-10px, 6px, 0) rotate(-0.6deg); }
+    20%  { transform: translate3d( 10px,-6px, 0) rotate( 0.6deg); }
+    30%  { transform: translate3d(-12px, 8px, 0) rotate(-0.8deg); }
+    40%  { transform: translate3d( 12px,-8px, 0) rotate( 0.8deg); }
+    50%  { transform: translate3d(-10px, 6px, 0) rotate(-0.6deg); }
+    60%  { transform: translate3d( 10px,-6px, 0) rotate( 0.6deg); }
+    70%  { transform: translate3d(-8px,  5px, 0) rotate(-0.4deg); }
+    80%  { transform: translate3d( 8px, -5px, 0) rotate( 0.4deg); }
+    90%  { transform: translate3d(-4px,  2px, 0) rotate(-0.2deg); }
+    100% { transform: translate3d(0,0,0) rotate(0deg); }
+  }
 
-    /* EKRAN TİTREŞİM ANİMASYONU */
-    .shake {
-        animation: shake 0.4s;
-    }
-
-    @keyframes shake {
-        0% { transform: translate(0px, 0px); }
-        20% { transform: translate(-5px, 3px); }
-        40% { transform: translate(5px, -3px); }
-        60% { transform: translate(-5px, 3px); }
-        80% { transform: translate(5px, -3px); }
-        100% { transform: translate(0px, 0px); }
-    }
-
-    .video-background {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        z-index: 0;
-        pointer-events: none;
-        overflow: hidden;
-    }
-
-    .video-background iframe {
-        width: 100vw;
-        height: 100vh;
-        opacity: 0.25;
-    }
+  .video-background{
+    position:fixed;
+    top:0; left:0;
+    width:100%; height:100%;
+    z-index:0;
+    pointer-events:none;
+    overflow:hidden;
+  }
+  .video-background iframe{
+    width:100vw;
+    height:100vh;
+    opacity:0.25;
+  }
 </style>
 </head>
 
 <body>
 
 <div class="video-background">
-    <iframe 
-        id="bgMusic"
-        src="https://www.youtube.com/embed/GxldQ9eX2wo?enablejsapi=1&loop=1&playlist=GxldQ9eX2wo"
-        frameborder="0"
-        allow="autoplay">
-    </iframe>
+  <iframe
+    id="bgMusic"
+    src="https://www.youtube.com/embed/GxldQ9eX2wo?enablejsapi=1&loop=1&playlist=GxldQ9eX2wo"
+    frameborder="0"
+    allow="autoplay">
+  </iframe>
 </div>
 
-<h1>Beni Seviyor Musun? 💖</h1>
+<div id="ui">
+  <h1>Beni Seviyor Musun? 💖</h1>
 
-<button id="yes" class="btn">Evet 😍</button>
-<button id="no" class="btn">Hayır 🙄</button>
+  <button id="yes" class="btn">Evet 😍</button>
+  <button id="no" class="btn">Hayır 🙄</button>
 
-<div id="message"></div>
+  <div id="message"></div>
+</div>
 
 <script>
-    const noBtn = document.getElementById("no");
-    const iframe = document.getElementById("bgMusic");
+  const noBtn = document.getElementById("no");
+  const iframe = document.getElementById("bgMusic");
+  const ui = document.getElementById("ui");
 
-    // Hayır kaçıyor
-    noBtn.addEventListener("mouseover", function() {
-        const x = Math.random() * (window.innerWidth - 150);
-        const y = Math.random() * (window.innerHeight - 100);
-        noBtn.style.left = x + "px";
-        noBtn.style.top = y + "px";
-    });
+  // Hayır kaçıyor
+  noBtn.addEventListener("mouseover", () => {
+    const x = Math.random() * (window.innerWidth - 150);
+    const y = Math.random() * (window.innerHeight - 120);
+    noBtn.style.left = x + "px";
+    noBtn.style.top = y + "px";
+  });
 
-    // İlk dokunuşta müzik başlat
-    document.addEventListener("click", function() {
-        iframe.contentWindow.postMessage(
-            '{"event":"command","func":"playVideo","args":""}',
-            '*'
-        );
-    }, { once: true });
+  // İlk dokunuşta müzik başlat (mobil kuralı)
+  document.addEventListener("click", () => {
+    iframe.contentWindow.postMessage(
+      '{"event":"command","func":"playVideo","args":""}',
+      '*'
+    );
+  }, { once: true });
 
-    // Kalp oluşturma
-    function createHeart() {
-        const heart = document.createElement("div");
-        heart.classList.add("heart");
-        heart.innerHTML = "❤️";
-        heart.style.left = Math.random() * 100 + "vw";
-        heart.style.fontSize = (Math.random() * 20 + 20) + "px";
-        heart.style.animationDuration = (Math.random() * 2 + 3) + "s";
-        document.body.appendChild(heart);
+  function createHeart(){
+    const heart = document.createElement("div");
+    heart.className = "heart";
+    heart.textContent = "❤️";
+    heart.style.left = (Math.random() * 100) + "vw";
+    heart.style.fontSize = (Math.random() * 20 + 20) + "px";
+    heart.style.animationDuration = (Math.random() * 2 + 3) + "s";
+    document.body.appendChild(heart);
+    setTimeout(() => heart.remove(), 5000);
+  }
 
-        setTimeout(() => {
-            heart.remove();
-        }, 5000);
+  document.getElementById("yes").addEventListener("click", () => {
+    // iPhone’larda navigator.vibrate çoğu zaman çalışmaz; Android’de çalışır.
+    if (navigator.vibrate) navigator.vibrate([120, 60, 120]);
+
+    // Shake'i UI katmanına uygula
+    ui.classList.remove("shake"); // tekrar tetiklemek için
+    void ui.offsetWidth;          // reflow trick
+    ui.classList.add("shake");
+    setTimeout(() => ui.classList.remove("shake"), 600);
+
+    document.getElementById("message").innerHTML =
+      "Ben de seni çok seviyorum. Sevgililer günümüz kutlu olsun. ❤️🥰";
+
+    for (let i=0; i<120; i++){
+      setTimeout(createHeart, i * 80);
     }
-
-    // Evet'e basınca
-    document.getElementById("yes").addEventListener("click", function() {
-
-        // Telefon titreşimi (destekliyorsa)
-        if (navigator.vibrate) {
-            navigator.vibrate([100, 50, 100]);
-        }
-
-        // Ekran shake efekti
-        document.body.classList.add("shake");
-        setTimeout(() => {
-            document.body.classList.remove("shake");
-        }, 400);
-
-        // Mesaj
-        document.getElementById("message").innerHTML =
-        "Ben de seni çok seviyorum. Sevgililer günümüz kutlu olsun. ❤️🥰";
-
-        // Kalp yağmuru
-        for (let i = 0; i < 120; i++) {
-            setTimeout(createHeart, i * 80);
-        }
-    });
+  });
 </script>
 
 </body>
