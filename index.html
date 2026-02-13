@@ -6,11 +6,6 @@
 <title>Beni Seviyor Musun?</title>
 
 <style>
-  :root{
-    /* iPhone alt güvenli alanı + biraz boşluk */
-    --safe-bottom: max(env(safe-area-inset-bottom), 16px);
-  }
-
   body{
     background: linear-gradient(135deg,#ff758c,#ff7eb3);
     font-family: Arial, sans-serif;
@@ -22,7 +17,8 @@
   #ui{
     position: relative;
     width: 100vw;
-    height: 100svh; /* mobilde daha doğru */
+    height: 100svh;
+    z-index: 2;
   }
 
   h1{
@@ -40,26 +36,13 @@
     cursor:pointer;
     position:absolute;
     transition:0.2s;
+    z-index: 2;
   }
 
   #yes{ background:#4CAF50; color:#fff; left:45%; top:50%; }
   #no { background:#f44336; color:#fff; left:60%; top:50%; }
 
-  /* ✅ Mesajı “sayfanın içine” sabitliyoruz */
-  #message{
-    position: fixed;
-    left: 0;
-    right: 0;
-    bottom: calc(var(--safe-bottom) + 18px);
-    padding: 0 14px;
-    font-size: 26px;
-    color:#fff;
-    font-weight:bold;
-    line-height: 1.25;
-    z-index: 3;
-    text-shadow: 0 2px 10px rgba(0,0,0,0.25);
-  }
-
+  /* Falling hearts */
   .heart{
     position:fixed;
     top:-10px;
@@ -68,16 +51,114 @@
     z-index: 1;
   }
   @keyframes fall{
-    to{ transform: translateY(100vh); opacity:0; }
+    to{ transform: translateY(110vh); opacity:0; }
   }
 
-  .shake{ animation: shake 0.5s; }
+  /* Burst hearts (explosion) */
+  .burst{
+    position: fixed;
+    left: var(--x);
+    top: var(--y);
+    transform: translate(-50%, -50%);
+    pointer-events:none;
+    z-index: 99999;
+    animation: burstMove 900ms ease-out forwards;
+    opacity: 1;
+    font-size: var(--size);
+  }
+  @keyframes burstMove{
+    to{
+      transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) rotate(var(--rot));
+      opacity: 0;
+    }
+  }
+
+  /* Shake */
+  .shake{ animation: shake 0.55s cubic-bezier(.36,.07,.19,.97) both; }
   @keyframes shake{
-    0%{ transform: translate(0,0); }
-    25%{ transform: translate(-10px,5px); }
-    50%{ transform: translate(10px,-5px); }
-    75%{ transform: translate(-10px,5px); }
-    100%{ transform: translate(0,0); }
+    0%   { transform: translate3d(0,0,0) rotate(0deg); }
+    10%  { transform: translate3d(-10px, 6px, 0) rotate(-0.6deg); }
+    20%  { transform: translate3d( 10px,-6px, 0) rotate( 0.6deg); }
+    30%  { transform: translate3d(-12px, 8px, 0) rotate(-0.8deg); }
+    40%  { transform: translate3d( 12px,-8px, 0) rotate( 0.8deg); }
+    50%  { transform: translate3d(-10px, 6px, 0) rotate(-0.6deg); }
+    60%  { transform: translate3d( 10px,-6px, 0) rotate( 0.6deg); }
+    70%  { transform: translate3d(-8px,  5px, 0) rotate(-0.4deg); }
+    80%  { transform: translate3d( 8px, -5px, 0) rotate( 0.4deg); }
+    90%  { transform: translate3d(-4px,  2px, 0) rotate(-0.2deg); }
+    100% { transform: translate3d(0,0,0) rotate(0deg); }
+  }
+
+  /* ✅ Popup overlay + glow */
+  #overlay{
+    position: fixed;
+    inset: 0;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    padding: 16px;
+    background: rgba(0,0,0,0.45);
+  }
+
+  /* glow layer */
+  #overlay::before{
+    content:"";
+    position:absolute;
+    inset:-40px;
+    background:
+      radial-gradient(circle at 30% 30%, rgba(255,255,255,0.22), transparent 45%),
+      radial-gradient(circle at 70% 60%, rgba(255,200,220,0.22), transparent 50%),
+      radial-gradient(circle at 50% 80%, rgba(255,255,255,0.16), transparent 55%);
+    filter: blur(10px);
+    animation: glowPulse 2.2s ease-in-out infinite;
+  }
+
+  @keyframes glowPulse{
+    0%,100% { opacity: 0.7; transform: scale(1); }
+    50% { opacity: 1; transform: scale(1.03); }
+  }
+
+  #popup{
+    position: relative;
+    width: min(560px, 92vw);
+    background: rgba(255,255,255,0.18);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255,255,255,0.25);
+    border-radius: 20px;
+    box-shadow: 0 22px 70px rgba(0,0,0,0.28);
+    color: white;
+    padding: 18px 16px 14px;
+    text-align: center;
+    transform: scale(0.92);
+    opacity: 0;
+    transition: 0.25s ease;
+    z-index: 1; /* overlay::before altında kalmasın */
+  }
+
+  #overlay.show #popup{
+    transform: scale(1);
+    opacity: 1;
+  }
+
+  #popup h2{
+    margin: 0 0 10px;
+    font-size: 28px;
+  }
+
+  #popup p{
+    margin: 0 0 14px;
+    font-size: 20px;
+    line-height: 1.35;
+  }
+
+  #kissBtn{
+    border: none;
+    border-radius: 14px;
+    padding: 11px 16px;
+    font-size: 16px;
+    cursor: pointer;
   }
 </style>
 </head>
@@ -90,7 +171,14 @@
   <button id="no" class="btn">Hayır 🙄</button>
 </div>
 
-<div id="message"></div>
+<!-- ✅ Popup -->
+<div id="overlay" aria-hidden="true">
+  <div id="popup" role="dialog" aria-modal="true">
+    <h2>✨ Sevgililer Günü ✨</h2>
+    <p id="popupText"></p>
+    <button id="kissBtn">Öpücük gönder 😘</button>
+  </div>
+</div>
 
 <audio id="bgMusic" src="music.mp3" loop></audio>
 
@@ -100,6 +188,11 @@
   const audio = document.getElementById("bgMusic");
   const ui = document.getElementById("ui");
 
+  const overlay = document.getElementById("overlay");
+  const popupText = document.getElementById("popupText");
+  const kissBtn = document.getElementById("kissBtn");
+
+  // Hayır kaçıyor
   noBtn.addEventListener("mouseover", () => {
     const x = Math.random() * (window.innerWidth - 150);
     const y = Math.random() * (window.innerHeight - 120);
@@ -107,11 +200,12 @@
     noBtn.style.top = y + "px";
   });
 
+  // İlk dokunuşta müzik (mobil kuralı)
   document.addEventListener("click", () => {
-    audio.play();
+    audio.play().catch(() => {});
   }, { once: true });
 
-  function createHeart(){
+  function createFallingHeart(){
     const heart = document.createElement("div");
     heart.className = "heart";
     heart.textContent = "❤️";
@@ -119,23 +213,79 @@
     heart.style.fontSize = (Math.random() * 20 + 20) + "px";
     heart.style.animationDuration = (Math.random() * 2 + 3) + "s";
     document.body.appendChild(heart);
-    setTimeout(() => heart.remove(), 5000);
+    setTimeout(() => heart.remove(), 5200);
   }
 
+  function openPopup(text){
+    popupText.textContent = text;
+    overlay.style.display = "flex";
+    requestAnimationFrame(() => overlay.classList.add("show"));
+    overlay.setAttribute("aria-hidden","false");
+  }
+
+  function closePopup(){
+    overlay.classList.remove("show");
+    overlay.setAttribute("aria-hidden","true");
+    setTimeout(() => { overlay.style.display = "none"; }, 230);
+  }
+
+  // 💥 Heart burst (explosion) at center
+  function heartBurstAt(x, y, count = 18){
+    for(let i=0;i<count;i++){
+      const b = document.createElement("div");
+      b.className = "burst";
+      b.textContent = (Math.random() < 0.15) ? "💖" : "❤️";
+
+      const angle = Math.random() * Math.PI * 2;
+      const dist = 70 + Math.random() * 140;
+      const dx = Math.cos(angle) * dist;
+      const dy = Math.sin(angle) * dist;
+
+      b.style.setProperty("--x", x + "px");
+      b.style.setProperty("--y", y + "px");
+      b.style.setProperty("--dx", dx.toFixed(0) + "px");
+      b.style.setProperty("--dy", dy.toFixed(0) + "px");
+      b.style.setProperty("--rot", (Math.random()*120 - 60).toFixed(0) + "deg");
+      b.style.setProperty("--size", (18 + Math.random()*18).toFixed(0) + "px");
+
+      document.body.appendChild(b);
+      setTimeout(() => b.remove(), 950);
+    }
+  }
+
+  // Evet'e basınca
   yesBtn.addEventListener("click", () => {
     if (navigator.vibrate) navigator.vibrate([120,60,120]);
 
     ui.classList.remove("shake");
     void ui.offsetWidth;
     ui.classList.add("shake");
-    setTimeout(() => ui.classList.remove("shake"), 500);
+    setTimeout(() => ui.classList.remove("shake"), 600);
 
-    document.getElementById("message").innerHTML =
-      "Ben de seni çok seviyorum. Sevgililer günümüz kutlu olsun. ❤️🥰";
+    openPopup("Ben de seni çok seviyorum. Sevgililer günümüz kutlu olsun. ❤️🥰");
 
+    // Kalp yağmuru
     for (let i=0; i<120; i++){
-      setTimeout(createHeart, i * 80);
+      setTimeout(createFallingHeart, i * 80);
     }
+  });
+
+  // Öpücük gönder 😘 -> patlama + kapanış
+  kissBtn.addEventListener("click", () => {
+    const rect = document.getElementById("popup").getBoundingClientRect();
+    const cx = rect.left + rect.width / 2;
+    const cy = rect.top + rect.height / 2;
+
+    heartBurstAt(cx, cy, 22);
+
+    if (navigator.vibrate) navigator.vibrate([80,40,80]);
+
+    closePopup();
+  });
+
+  // overlay'e tıklayınca da kapanmasın istiyorsan bunu kaldırabilirsin.
+  overlay.addEventListener("click", (e) => {
+    if (e.target === overlay) closePopup();
   });
 </script>
 
