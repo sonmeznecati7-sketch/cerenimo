@@ -2,136 +2,141 @@
 <html lang="tr">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Beni Seviyor Musun?</title>
 
 <style>
-body {
-    background: linear-gradient(135deg, #ff758c, #ff7eb3);
-    font-family: Arial, sans-serif;
-    text-align: center;
-    margin: 0;
-    overflow: hidden;
-}
+  :root{
+    /* iPhone alt güvenli alanı + biraz boşluk */
+    --safe-bottom: max(env(safe-area-inset-bottom), 16px);
+  }
 
-#ui {
+  body{
+    background: linear-gradient(135deg,#ff758c,#ff7eb3);
+    font-family: Arial, sans-serif;
+    text-align:center;
+    margin:0;
+    overflow:hidden;
+  }
+
+  #ui{
     position: relative;
     width: 100vw;
-    height: 100vh;
-}
+    height: 100svh; /* mobilde daha doğru */
+  }
 
-h1 {
-    color: white;
-    margin-top: 100px;
+  h1{
+    color:#fff;
+    margin-top: 80px;
     font-size: 40px;
-}
+    padding: 0 16px;
+  }
 
-.btn {
-    padding: 15px 30px;
-    font-size: 20px;
-    border: none;
-    border-radius: 15px;
-    cursor: pointer;
-    position: absolute;
-    transition: 0.2s;
-}
+  .btn{
+    padding:15px 30px;
+    font-size:20px;
+    border:none;
+    border-radius:15px;
+    cursor:pointer;
+    position:absolute;
+    transition:0.2s;
+  }
 
-#yes { background: #4CAF50; color: white; left: 45%; top: 50%; }
-#no { background: #f44336; color: white; left: 60%; top: 50%; }
+  #yes{ background:#4CAF50; color:#fff; left:45%; top:50%; }
+  #no { background:#f44336; color:#fff; left:60%; top:50%; }
 
-#message {
-    position: absolute;
-    width: 100%;
-    bottom: 80px;
-    font-size: 28px;
-    color: white;
-    font-weight: bold;
-}
-
-.heart {
+  /* ✅ Mesajı “sayfanın içine” sabitliyoruz */
+  #message{
     position: fixed;
-    top: -10px;
+    left: 0;
+    right: 0;
+    bottom: calc(var(--safe-bottom) + 18px);
+    padding: 0 14px;
+    font-size: 26px;
+    color:#fff;
+    font-weight:bold;
+    line-height: 1.25;
+    z-index: 3;
+    text-shadow: 0 2px 10px rgba(0,0,0,0.25);
+  }
+
+  .heart{
+    position:fixed;
+    top:-10px;
     animation: fall linear forwards;
-    pointer-events: none;
-}
+    pointer-events:none;
+    z-index: 1;
+  }
+  @keyframes fall{
+    to{ transform: translateY(100vh); opacity:0; }
+  }
 
-@keyframes fall {
-    to { transform: translateY(100vh); opacity: 0; }
-}
-
-.shake {
-    animation: shake 0.5s;
-}
-
-@keyframes shake {
-    0% { transform: translate(0,0); }
-    25% { transform: translate(-10px,5px); }
-    50% { transform: translate(10px,-5px); }
-    75% { transform: translate(-10px,5px); }
-    100% { transform: translate(0,0); }
-}
+  .shake{ animation: shake 0.5s; }
+  @keyframes shake{
+    0%{ transform: translate(0,0); }
+    25%{ transform: translate(-10px,5px); }
+    50%{ transform: translate(10px,-5px); }
+    75%{ transform: translate(-10px,5px); }
+    100%{ transform: translate(0,0); }
+  }
 </style>
 </head>
 
 <body>
 
 <div id="ui">
-    <h1>Beni Seviyor Musun? 💖</h1>
-    <button id="yes" class="btn">Evet 😍</button>
-    <button id="no" class="btn">Hayır 🙄</button>
-    <div id="message"></div>
+  <h1>Beni Seviyor Musun? 💖</h1>
+  <button id="yes" class="btn">Evet 😍</button>
+  <button id="no" class="btn">Hayır 🙄</button>
 </div>
 
-<!-- AUDIO -->
+<div id="message"></div>
+
 <audio id="bgMusic" src="music.mp3" loop></audio>
 
 <script>
-const noBtn = document.getElementById("no");
-const yesBtn = document.getElementById("yes");
-const audio = document.getElementById("bgMusic");
-const ui = document.getElementById("ui");
+  const noBtn = document.getElementById("no");
+  const yesBtn = document.getElementById("yes");
+  const audio = document.getElementById("bgMusic");
+  const ui = document.getElementById("ui");
 
-// Hayır kaçıyor
-noBtn.addEventListener("mouseover", () => {
+  noBtn.addEventListener("mouseover", () => {
     const x = Math.random() * (window.innerWidth - 150);
     const y = Math.random() * (window.innerHeight - 120);
     noBtn.style.left = x + "px";
     noBtn.style.top = y + "px";
-});
+  });
 
-// İlk dokunuşta müzik başlat (mobil uyumlu)
-document.addEventListener("click", () => {
+  document.addEventListener("click", () => {
     audio.play();
-}, { once: true });
+  }, { once: true });
 
-// Kalp oluştur
-function createHeart(){
+  function createHeart(){
     const heart = document.createElement("div");
     heart.className = "heart";
     heart.textContent = "❤️";
-    heart.style.left = Math.random() * 100 + "vw";
+    heart.style.left = (Math.random() * 100) + "vw";
     heart.style.fontSize = (Math.random() * 20 + 20) + "px";
     heart.style.animationDuration = (Math.random() * 2 + 3) + "s";
     document.body.appendChild(heart);
     setTimeout(() => heart.remove(), 5000);
-}
+  }
 
-// Evet'e basınca
-yesBtn.addEventListener("click", () => {
+  yesBtn.addEventListener("click", () => {
+    if (navigator.vibrate) navigator.vibrate([120,60,120]);
 
-    if (navigator.vibrate) {
-        navigator.vibrate([120,60,120]);
-    }
-
+    ui.classList.remove("shake");
+    void ui.offsetWidth;
     ui.classList.add("shake");
     setTimeout(() => ui.classList.remove("shake"), 500);
 
     document.getElementById("message").innerHTML =
-        "Ben de seni çok seviyorum. Sevgililer günümüz kutlu olsun. ❤️🥰";
+      "Ben de seni çok seviyorum. Sevgililer günümüz kutlu olsun. ❤️🥰";
 
-    for (let i = 0; i < 120; i++) {
-        setTimeout(createHeart, i * 80);
+    for (let i=0; i<120; i++){
+      setTimeout(createHeart, i * 80);
     }
-});
+  });
 </script>
 
 </body>
